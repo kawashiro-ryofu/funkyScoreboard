@@ -1,0 +1,269 @@
+<!DOCTYPE HTML>
+<head>
+    <meta charset="utf-8">
+</head>
+<style>
+@font-face {
+    font-family: pixel;
+    src: url('VonwaonBitmap-16pxLite.ttf');
+}
+body{
+    overflow: hidden;
+    background-color: black;
+    font-family: 'pixel';
+}
+#title{
+    height: 5vh;
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 23%;
+    margin: auto 0;
+    /*background-color: aqua;*/
+    text-align: center;
+}
+.teamname{
+    display: inline-block;
+    color: lightcoral;
+    font-size: 48px;
+    width: 200px;
+    overflow: hidden;
+    font-weight: bold;
+}
+#VS{
+    color: lightgreen;
+    font-weight: bold;
+}
+#score{
+    height: 10vh;
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 56%;
+    margin: auto 0;
+
+    text-align: center;
+}
+@keyframes bdhl {
+    0% {background: black; color:yellow}
+    15% {background: white;color: black;}
+    100% {background: black;color: yellow}
+}
+.boardhl{
+    animation: 5s bdhl
+}
+
+@keyframes bddl {
+    0% {background: #550000; color:black}
+    15% {background: red;color: black;}
+    100% {background: black;color: yellow}
+}
+.boarddl{
+    animation: 5s bddl
+}
+
+.teamscore{
+    display: inline-block;
+    color: yellow;
+    font-size: 160px;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    border: 5px solid grey;
+}
+#comment{
+    height: 1vh;
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 20%;
+    margin: auto 0;
+    color: white;
+    font-size: 32px;
+    text-align: center;
+}
+#timer{
+    position: absolute;
+    top: 5%;
+    left: 0;
+    right: 0;
+    margin: auto 0;
+    text-align: center;
+    color: greenyellow;
+    z-index: 11
+}
+.timerobj{
+    display: inline-block;
+    font-size: 48px;
+}
+#game_section{
+    color: white;
+    background-color: #00000000;
+}
+#waiting-layer{
+    position: absolute;
+    z-index:10;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    background-color: #000000DD;
+    margin: auto 0;
+    text-align: center;
+    color: white
+}
+.status{
+    display: inline-block;
+    width: 256px;
+    font-size: 48px;
+    border: 5px solid gray;
+    color: black;
+    
+}
+#waiting{
+    background-color: yellow;
+    z-index: 11;
+}
+#end{
+    background-color: red;
+}
+</style>
+<body>
+    <div id="timer">
+        <div class="timerobj" id="timer_M">00</div>
+        <div class="timerobj" id="timer_colon">:</div>
+        <div class="timerobj" id="timer_S">00</div>
+        <br>
+        <div class="status" id="waiting">等待开始</div>
+        <div class="timerobj status" id="game_section">第<span id="game_section_n">X</span>节</div>
+        <div class="status" id="end">已结束</div>
+        <hr>
+    </div>
+    <div id="title">
+        <div class="teamname" id="teamAname">XXXX</div>
+        <div class="teamname" id="VS">VS</div>
+        <div class="teamname" id="teamBname">XXXX</div>
+    </div>
+    <div id="score">
+        <div class="teamscore" id="teamAscore">000</div>
+        <div class="teamscore" id="teamBscore">000</div>
+    </div>
+    <div id="waiting-layer">
+        <div style="padding: 15%;font-size: 36px;color:aqua"><img src="loading.gif" /><br>少女祈祷中……</span></div>
+    </div>
+    <div id="comment">南昌市实验中学第四届“和美杯”篮球赛<br>技术支持：实验信息部</div>
+    <script src="jquery/jquery.min.js"></script>
+    <script>
+    const SERVERURL = "http://127.0.0.1/gamestat.json";
+    var gaming = false
+    var gameend = false
+    var startTime = 0;
+    var section = 0
+    var team = {
+        teamA:{
+            name: "A",score: 0
+        },
+        teamB:{
+            name: "B",score: 0
+        }
+    }
+    function query(){
+        $.ajax({
+            url: SERVERURL + '?t=' + Math.random(),
+            async:false,
+            success: function(result){
+                gamestatus = parseInt(result.status)
+                switch(gamestatus){
+                    case 2: gaming = false; gameend = true;break;
+                    case 1: gaming = true; gameend = false;break;
+                    default: gaming = false; gameend = false;
+                }
+
+                startTime = result.startTime
+                section = result.section
+                team.teamA.name = result.team.A.name
+                team.teamB.name = result.team.B.name
+                
+                team.teamA.score = result.team.A.score
+                if(team.teamA.score < 0)team.teamA.score = 0
+                team.teamB.score = result.team.B.score
+                if(team.teamB.score < 0)team.teamB.score = 0
+                
+            }
+        })
+    }
+    function applyData(){
+		$('#game_section_n').html(section.toString())
+        function m(){
+            //Calc Time
+            let t = Math.round(new Date().getTime()/1000) - startTime
+            let tmin = parseInt((Math.round(new Date().getTime()/1000)  - startTime )/60)
+            let tsec = t - tmin*60
+            let tmins = tmin.toString()
+            if(tmins.length<2)tmins = '0'+ tmins
+            let tsecs = tsec.toString()
+            if(tsecs.length<2)tsecs = '0'+ tsecs
+            $('#timer_M').html(tmins)
+            $('#timer_S').html(tsecs)
+
+            //PlayersNd'Score
+            $('#teamAname').html(team.teamA.name)
+            $('#teamBname').html(team.teamB.name)
+            let oldscoreA = parseInt($('#teamAscore').text())
+            let oldscoreB = parseInt($('#teamBscore').text())
+            if((oldscoreA != team.teamA.score) || (oldscoreB != team.teamB.score)){
+                let newscoreA = team.teamA.score.toString()
+                if(newscoreA.length == 1)newscoreA = '00' + newscoreA
+                if(newscoreA.length == 2)newscoreA = '0' + newscoreA
+                let newscoreB = team.teamB.score.toString()
+                if(newscoreB.length == 1)newscoreB = '00' + newscoreB
+                if(newscoreB.length == 2)newscoreB = '0' + newscoreB
+                $('#teamAscore').html(newscoreA)
+                $('#teamBscore').html(newscoreB)
+                if(team.teamA.score > oldscoreA){
+                    $("#teamAscore").addClass('boardhl')
+                    setTimeout(()=>{
+                        $("#teamAscore").removeClass('boardhl')
+                    }, 5000)
+                }
+                if(team.teamB.score > oldscoreB){
+                    $("#teamBscore").addClass('boardhl')
+                    setTimeout(()=>{
+                        $("#teamBscore").removeClass('boardhl')
+                    }, 5000)
+                }
+                if(team.teamA.score < oldscoreA){
+					$("#teamAscore").addClass('boarddl')
+                    setTimeout(()=>{
+                        $("#teamAscore").removeClass('boarddl')
+                    }, 5000)
+                }
+                if(team.teamB.score < oldscoreB){
+                    $("#teamBscore").addClass('boarddl')
+                    setTimeout(()=>{
+                        $("#teamBscore").removeClass('boarddl')
+                    }, 5000)
+                }
+            }
+            
+            
+        }
+        if(gaming){
+            $('#end').css('opacity','0')
+            $('#waiting-layer').slideUp()
+            $('#waiting').css('opacity','0')
+            m()
+        }else if(gameend){
+            $('#end').css('opacity','1')
+        }else{
+            //section
+            $('#end').css('opacity','0')
+            $('#waiting').css('opacity','1')
+            $('#waiting-layer').slideDown()
+        }
+        
+    }
+    setInterval(()=>{query();applyData()}, 50)
+    </script>
+</body>
