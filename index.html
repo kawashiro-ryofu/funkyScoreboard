@@ -1,10 +1,20 @@
 <!DOCTYPE HTML>
 <head>
     <meta charset="utf-8">
-    <title>Scoreboard</title>
     <link rel="stylesheet" href="static/boardstyle.css">
 </head>
 <body>
+    <!--启动时的欢迎界面 + 等待server进程上线-->
+    <div id="welcome" class="shield">
+        <div id="welcome-projectname">
+            <img src="./assests/icon_line.png" style="width: 128px; float: left;">
+            <div style="font-size: 64px;">Funky Scoreboard</div>
+        </div>
+        <div id="welcome-credit" style="position: absolute; bottom: 10px; width: 100%; text-align: center; color: grey">(C) 2023 kawashiro-ryofu, Comply with the MPL-2.0 license</div>
+    </div>
+    <!--引导用户登录到控制器页面 iframe实现-->
+    <!--<div id="loginguide" class="shield"></div>-->
+    <!--计分板-->
     <div id="timer">
         <div class="timerobj" id="timer_M">00</div>
         <div class="timerobj" id="timer_colon">:</div>
@@ -24,9 +34,10 @@
         <div class="teamscore" id="teamAscore">000</div>
         <div class="teamscore" id="teamBscore">000</div>
     </div>
+    <!--等待加载的动画-->
     <div id="waiting-layer">
         <div style="padding: 20%;font-size: 36px;color:aqua"><img src="static/loading.gif" /><br>少女祈祷中……</span></div>
     </div>
-    <div id="comment">南昌市实验中学第四届“和美杯”篮球赛<br>技术支持：实验信息部</div>
+    <div id="subtitle"></div>
 
 </body>

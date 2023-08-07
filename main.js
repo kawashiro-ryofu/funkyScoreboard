@@ -1,20 +1,23 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
+const version = 'v' + require(__dirname + '/package.json').version
+
 
 function createWindow () {
   const win = new BrowserWindow({
     width: 1280,
     height: 800,
     autoHideMenuBar: true,
+    icon: './assests/favicon.ico',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
       contextIsolation: false
     }
   })
-
+  win.setMinimumSize(1280, 800)
   win.loadFile('index.html')
-
+  win.setTitle(`Funky Scoreboard ${version}`)
   //win.setFullScreen(true)
 }
 

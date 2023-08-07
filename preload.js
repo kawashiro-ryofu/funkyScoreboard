@@ -13,12 +13,15 @@ var team = {
 		score: 0
 	}
 }
+var subtitle = "Funky Scoreboard"
 
 function query() {
 	$.ajax({
 		url: SERVERURL + '?t=' + Math.random(),
 		async: false,
 		success: function(result) {
+			$('#welcome')
+				.slideUp()
 			gamestatus = parseInt(result.status)
 			switch (gamestatus) {
 				case 2:
@@ -44,6 +47,8 @@ function query() {
 			team.teamB.score = result.team.B.score
 			if (team.teamB.score < 0) team.teamB.score = 0
 
+			subtitle = result.message
+
 		}
 	})
 }
@@ -54,7 +59,7 @@ function applyData() {
 	$('#game_section_n')
 		.html(section.toString())
 
-	function m() {
+	function gamedataDisplay() {
 		//Calc Time
 		let t = Math.round(new Date()
 			.getTime() / 1000) - startTime
@@ -70,6 +75,10 @@ function applyData() {
 		$('#timer_S')
 			.html(tsecs)
 
+		//	subtitle
+		$('#subtitle')
+			.text(subtitle)
+		
 		//PlayersNd'Score
 		$('#teamAname')
 			.html(team.teamA.name)
@@ -124,7 +133,6 @@ function applyData() {
 			}
 		}
 
-
 	}
 	if (gaming) {
 		$('#end')
@@ -133,7 +141,7 @@ function applyData() {
 			.slideUp()
 		$('#waiting')
 			.css('opacity', '0')
-		m()
+		gamedataDisplay()
 	} else if (gameend) {
 		$('#end')
 			.css('opacity', '1')

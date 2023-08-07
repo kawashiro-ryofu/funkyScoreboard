@@ -89,6 +89,12 @@ app.get(accessRoute, (req, res) => {
   res.sendFile(__dirname + '/' + 'admin.html')
 })
 
+//  图标
+//  302永久重定向
+app.get('/favicon.ico', (req, res) => {
+  res.redirect(302, '/static/favicon.ico')
+})
+
 // 用户身份验证路由
 app.post('/api/login', (req, res) => {
   // 这里可以进行用户名和密码的验证
