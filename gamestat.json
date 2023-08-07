@@ -1,0 +1,15 @@
+{
+    "status": 0,
+    "startTime": 0,
+    "section": 1,
+    "team": {
+        "A": {
+            "name": "诸葛孔明",
+            "score": 0
+        },
+        "B": {
+            "name": "王司徒",
+            "score": 0
+        }
+    }
+}
