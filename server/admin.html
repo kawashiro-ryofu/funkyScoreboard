@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>登录</title>
+    <link rel="stylesheet" type="text/css" href="/static/panelstyle.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+</head>
+<body>
+    <div id="main-wrapper">
+        <h1>控制器</h1>
+        <form id="loginForm" style="display: none;">
+            <label for="verifycode">验证码:</label>
+            <input type="verifycode" id="verifycode" name="verifycode" required>
+            <input type="submit" value="Go!">
+        </form>
+    </div>
+    <footer>
+        <hr>
+        Funky Scoreboard<br>
+        © 2023 <a href="https://github.com/kawashiro-ryofu">kawashiro-ryofu</a>, Comply with the <a href="https://www.mozilla.org/en-US/MPL/2.0/">MPL-2.0</a> license
+    </footer>
+    <script>
+        // 删除无用token
+        function resetToken(){
+            localStorage.removeItem('authorization');
+            document.getElementById('loginForm').style.display = 'block' 
+        }
+
+        function goToAdmin(token){
+            fetch('/api/protected', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(Response => {
+                if(Response.status != 200){
+                    let e = Response.status + ' ' + Response.statusText
+                    throw new Error(e)
+                }
+                return Response.json()
+            }).then(data => {
+                window.alert(data.message)
+            })
+            .catch(error => {
+                console.error(error)
+                resetToken()
+            })
+        }
+
+        new Promise((resolve, reject) => {
+            if(localStorage.getItem('authorization') != null){
+                let localauth = JSON.parse(localStorage.getItem('authorization'))
+                let timestamp = localauth.timestamp
+                let token = localauth.token
+                if (new Date().getTime() <= timestamp + 86400000) {
+                    resolve(token);
+                } else {
+                    reject('未登录');
+                }
+            }
+            else reject('未登录')
+        })
+        .then(token => {
+            goToAdmin(token)
+        })
+        //  如果本地的authorization不存在或无效
+        .catch((err) => {
+            //console.log(localStorage)
+            console.error(err)
+            resetToken()
+        })
+
+        const form = document.getElementById('loginForm');
+        const verifycodeInput = document.getElementById('verifycode');
+        // 监听登录
+        form.addEventListener('submit', () => {
+            event.preventDefault();
+
+            const verifycode = verifycodeInput.value;
+            let respondstatus = 0
+            fetch('/api/login?verifycode=' + verifycode, {method: 'POST'})
+                .then(Response => {
+                    respondstatus = Response.status
+                    return Response.json()
+                })
+                .then(data => {
+                    console.log(data)
+                    if(respondstatus != 200){
+                        window.alert(data.message)
+                    }
+                    window.alert(data.message)
+                    return data
+                })
+                .then(data => {
+                    localStorage.setItem('authorization', JSON.stringify({
+                        timestamp: data.timestamp,
+                        token: data.token
+                    }))
+                    return 0
+                })
+                .then(()=>{
+                    location.href = location.href
+                })
+        })
+    </script>
+</body>

@@ -1,0 +1,128 @@
+@font-face {
+    font-family: pixel;
+    src: url('font.ttf');
+}
+body{
+    overflow: hidden;
+    background-color: black;
+    font-family: 'pixel';
+}
+#title{
+    height: 5vh;
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 23%;
+    margin: auto 0;
+    /*background-color: aqua;*/
+    text-align: center;
+}
+.teamname{
+    display: inline-block;
+    color: lightcoral;
+    font-size: 48px;
+    width: 200px;
+    overflow: hidden;
+    font-weight: bold;
+}
+#VS{
+    color: lightgreen;
+    font-weight: bold;
+}
+#score{
+    height: 10vh;
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 56%;
+    margin: auto 0;
+
+    text-align: center;
+}
+@keyframes bdhl {
+    0% {background: black; color:yellow}
+    15% {background: white;color: black;}
+    100% {background: black;color: yellow}
+}
+.boardhl{
+    animation: 5s bdhl
+}
+
+@keyframes bddl {
+    0% {background: #550000; color:black}
+    15% {background: red;color: black;}
+    100% {background: black;color: yellow}
+}
+.boarddl{
+    animation: 5s bddl
+}
+
+.teamscore{
+    display: inline-block;
+    color: yellow;
+    font-size: 160px;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    border: 5px solid grey;
+}
+#comment{
+    height: 1vh;
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 20%;
+    margin: auto 0;
+    color: white;
+    font-size: 32px;
+    text-align: center;
+}
+#timer{
+    position: absolute;
+    top: 5%;
+    left: 0;
+    right: 0;
+    margin: auto 0;
+    text-align: center;
+    color: greenyellow;
+    z-index: 11
+}
+.timerobj{
+    display: inline-block;
+    font-size: 48px;
+}
+#game_section{
+    color: white;
+    background-color: #00000000;
+}
+#waiting-layer{
+    position: absolute;
+    z-index:10;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    background-color: #000000DD;
+    margin: auto 0;
+    text-align: center;
+    color: white
+}
+#waiting-layer div img{
+    height: 200px;
+}
+.status{
+    display: inline-block;
+    width: 256px;
+    font-size: 48px;
+    border: 5px solid gray;
+    color: black;
+    
+}
+#waiting{
+    background-color: yellow;
+    z-index: 11;
+}
+#end{
+    background-color: red;
+}

@@ -1,0 +1,25 @@
+{
+  "name": "funkyscoreboard",
+  "version": "1.0.0",
+  "description": "A funky scoreboard",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kawashiro-ryofu",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
+    "express-jwt": "^8.4.1",
+    "jquery": "^3.7.0",
+    "jsdom": "^22.1.0",
+    "jsonwebtoken": "^9.0.1",
+    "log4js": "^6.9.1",
+    "party-js": "^2.2.0",
+    "qrcode": "^1.5.3"
+  },
+  "devDependencies": {
+    "electron": "^25.4.0"
+  }
+}
