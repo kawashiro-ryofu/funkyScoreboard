@@ -16,7 +16,9 @@
     "jsdom": "^22.1.0",
     "jsonwebtoken": "^9.0.1",
     "log4js": "^6.9.1",
+    "moment": "^2.29.4",
     "party-js": "^2.2.0",
+    "pixelarticons": "^1.7.0",
     "qrcode": "^1.5.3"
   },
   "devDependencies": {

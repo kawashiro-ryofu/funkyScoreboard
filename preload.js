@@ -1,4 +1,4 @@
-const SERVERURL = "http://127.0.0.1:10721/api/gamestat";
+const SERVERURL = "http://127.0.0.1:10721";
 var gaming = false
 var gameend = false
 var startTime = 0;
@@ -15,9 +15,57 @@ var team = {
 }
 var subtitle = "Funky Scoreboard"
 
+//	获取日志
+function getlog(){
+	let l;
+	$.ajax({
+		url: SERVERURL + '/log?t=' + Math.random(),
+		async: false,
+		success: function(result) {
+			l = result
+		}
+	})
+	return l
+}
+
+function loginguide(){
+	$.ajax({
+		url: SERVERURL + '/api/getcontrolpanel?t=' + Math.random(),
+		async: false,
+		success: function(result) {
+			$('#loginguide-qr')[0].src = result.qr;
+			$('#loginguide-url').text(result.url)
+			$('#loginguide-verifycode').text(result.verifycode)
+
+			let a = getlog().split('\r\n')
+			let loghtml = ""
+			var color = "";
+			a.forEach(element => {
+				switch(element.split(']')[1]){
+					case "[INFO":
+						color = 'green'
+						break;
+					case "[WARN":
+						color = 'yellow'
+						break;
+					case "[ERROR":
+						color = 'lightcoral'
+						break
+					default:
+						color = 'grey'
+				}
+				loghtml += `<span style="color: ${color}">${element}</span><br>`
+			});
+			$('#loginguide-log').html(loghtml)
+			let ll = document.getElementById('loginguide-log')
+			ll.scrollTop = ll.scrollHeight
+
+		}
+	})
+}
 function query() {
 	$.ajax({
-		url: SERVERURL + '?t=' + Math.random(),
+		url: SERVERURL + '/api/gamestat?t=' + Math.random(),
 		async: false,
 		success: function(result) {
 			$('#welcome')
@@ -25,14 +73,21 @@ function query() {
 			gamestatus = parseInt(result.status)
 			switch (gamestatus) {
 				case 2:
+					$('#loginguide').slideUp()
 					gaming = false;
 					gameend = true;
 					break;
 				case 1:
+					$('#loginguide').slideUp()
 					gaming = true;
 					gameend = false;
 					break;
+				case -1:
+					$('#loginguide').slideDown()
+					loginguide();
+					break;
 				default:
+					$('#loginguide').slideUp()
 					gaming = false;
 					gameend = false;
 			}
@@ -49,6 +104,9 @@ function query() {
 
 			subtitle = result.message
 
+		},
+		error: function(err){
+			console.error(err)
 		}
 	})
 }
@@ -168,5 +226,5 @@ new Promise((resolve, reject) => {
 		setInterval(() => {
 			query();
 			applyData()
-		}, 50)
+		}, 200)
 	})

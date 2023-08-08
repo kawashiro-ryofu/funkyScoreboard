@@ -18,6 +18,13 @@ body{
     /*background-color: aqua;*/
     text-align: center;
 }
+.icon{
+    color: white;
+    width: 64px;
+    position: relative;
+    float: left;
+    margin: 10px;
+}
 .teamname{
     display: inline-block;
     color: lightcoral;
@@ -147,7 +154,35 @@ body{
     position: absolute;
     height: 160px;
     width: 480px;
-    top: 30%;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, 150%);
+    transform: translate(-50%, -50%);
+}
+#loginguide{
+    z-index: 15;
+    background-color: black;
+    padding: 50px;
+}
+#loginguide-wrapper{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+#loginguide-qr{
+    margin-left: 15%;
+    margin-right: 15%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    width: 60%;
+    border: dotted 2px gray;
+}
+.loginguide-box{
+    color: aquamarine;
+    font-size: 20px;
+    padding-left: 36px
+}
+
+#loginguide-log::-webkit-scrollbar {
+    width: 0
 }

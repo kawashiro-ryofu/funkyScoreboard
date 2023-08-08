@@ -1,3 +1,11 @@
+@font-face {
+    font-family: pixel;
+    src: url('font.ttf');
+}
+body{
+    overflow: hidden;
+    font-family: 'pixel';
+}
 footer{
     position: absolute;
     bottom: 0;

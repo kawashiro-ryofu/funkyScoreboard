@@ -6,14 +6,61 @@
 <body>
     <!--启动时的欢迎界面 + 等待server进程上线-->
     <div id="welcome" class="shield">
-        <div id="welcome-projectname">
-            <img src="./assests/icon_line.png" style="width: 128px; float: left;">
-            <div style="font-size: 64px;">Funky Scoreboard</div>
+        <div style="position: relative; width: 100%; height: 100%;">
+            <div id="welcome-projectname">
+                <img src="./assests/icon_line.png" style="width: 128px; float: left;">
+                <div style="font-size: 64px;">Funky Scoreboard</div>
+            </div>
         </div>
         <div id="welcome-credit" style="position: absolute; bottom: 10px; width: 100%; text-align: center; color: grey">(C) 2023 kawashiro-ryofu, Comply with the MPL-2.0 license</div>
     </div>
-    <!--引导用户登录到控制器页面 iframe实现-->
-    <!--<div id="loginguide" class="shield"></div>-->
+    <!--引导用户登录到控制台页面-->
+    <div id="loginguide" class="shield">
+        <div style="position: relative; width: 100%; height: 100%;">
+            <div id="loginguide-wrapper">
+                <div style="position: relative; background-color: #141414; width:800px; height: 600px; padding: 20px; ">
+                    <svg class="icon" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M3 3h8v10H3V3zm2 2v6h4V5H5zm8-2h8v6h-8V3zm2 2v2h4V5h-4zm-2 6h8v10h-8V11zm2 2v6h4v-6h-4zM3 15h8v6H3v-6zm2 2v2h4v-2H5z" fill="currentColor"/>
+                    </svg>        
+                    <h1 style="font-weight: normal; ">登录控制台</h1>
+                    <hr>
+                    <div style="width: 50%; height: 80%; float: left; padding: 10px; border-right: solid 1px gray;">
+                        <div style="color:white; display: flex;align-items: center; font-size: 24px;">
+                            <svg style="color: white; height: 32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M22 2H2v14h2V4h16v12h-8v2h-2v2H8v-4H2v2h4v4h4v-2h2v-2h10V2z" fill="currentColor"/>
+                            </svg>                            
+                            <span>扫描二维码进入控制台</span>
+                        </div>
+                        <img id="loginguide-qr" src="static/loading.gif">
+                        <div style="color:yellow; display: flex;align-items: center; font-size: 24px;">
+                            <svg style="color: yellow; height: 32px" fill="yellow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M3 3h16v2H5v14h14v2H3V3zm18 0h-2v18h2V3zM11 15h2v2h-2v-2zm2-8h-2v6h2V7z" fill="currentColor"/>
+                            </svg>                            
+                            请在同一局域网下访问
+                        </div>
+
+                        <div style="color:aqua; display: flex;align-items: center; padding-top: 20px; font-size: 24px; ">
+                            <svg style="color: aqua; height: 32px" fill="aqua" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M4 6h7v2H4v8h7v2H2V6h2zm16 0h-7v2h7v8h-7v2h9V6h-2zm-3 5H7v2h10v-2z" fill="currentColor"/>
+                            </svg>
+                            <span>地址</span>
+                        </div>
+                        <div id="loginguide-url" class="loginguide-box"></div>
+
+                        <div style="color:aqua; display: flex;align-items: center; font-size: 24px;">
+                            <svg style="color: aqua; height: 32px" fill="aqua" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M15 2H9v2H7v2h2V4h6v4H4v14h16V8h-3V4h-2V2zm0 8h3v10H6V10h9zm-2 3h-2v4h2v-4z" fill="currentColor"/>
+                            </svg>
+                            <span>验证码</span>
+                        </div>
+                        <div id="loginguide-verifycode" class="loginguide-box"></div>
+
+                    </div>
+                    <div id="loginguide-log" style="width: 44%; height: 80%; float: right; padding: 10px; overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!--计分板-->
     <div id="timer">
         <div class="timerobj" id="timer_M">00</div>
