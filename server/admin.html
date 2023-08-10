@@ -9,8 +9,60 @@
     <svg style="position: absolute;top: 5px;left: 5px;" class="icon" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M3 3h8v10H3V3zm2 2v6h4V5H5zm8-2h8v6h-8V3zm2 2v2h4V5h-4zm-2 6h8v10h-8V11zm2 2v6h4v-6h-4zM3 15h8v6H3v-6zm2 2v2h4v-2H5z" fill="currentColor"/>
     </svg>
-    <!--用于toast弹窗-->
+    <!--toast弹窗-->
     <div id="toast-layout"></div>
+    <!--配置页面-->
+    <div id="config-layout">
+        <h1>控制台</h1>
+        <div id="config-navibar">
+            <button title="队伍" onclick="setCurrentCard(0)" id="config-gameInfo-button">
+                <svg class="config-icon" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M11 0H5v2H3v6h2v2h6V8H5V2h6V0zm0 2h2v6h-2V2zM0 14h2v4h12v2H0v-6zm2 0h12v-2H2v2zm14 0h-2v6h2v-6zM15 0h4v2h-4V0zm4 8h-4v2h4V8zm0-6h2v6h-2V2zm5 12h-2v4h-4v2h6v-6zm-6-2h4v2h-4v-2z" fill="currentColor"/>
+                </svg>
+                队伍
+            </button>
+            <button title="赛事" onclick="setCurrentCard(1)" id="config-gameStat-button">
+                <svg class="config-icon" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15 2h2v2h4v18H3V4h4V2h2v2h6V2zM5 8h14V6H5v2zm0 2v10h14V10H5z" fill="currentColor"/>
+                </svg>
+                赛事
+            </button>
+            <button title="看板" onclick="setCurrentCard(2)" id="config-scoreBoardConfig-button">
+                <svg class="config-icon" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M21 3H3v18h18V3zM5 19V5h14v14H5zM9 7H7v8h2V7zm2 0h2v4h-2V7zm6 0h-2v10h2V7z" fill="currentColor"/>
+                </svg>                
+                看板
+            </button>
+        </div>
+
+        <div class="config-card" id="config-gameInfo">
+            <div class="config-card-title">
+                <svg class="config-icon" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M11 0H5v2H3v6h2v2h6V8H5V2h6V0zm0 2h2v6h-2V2zM0 14h2v4h12v2H0v-6zm2 0h12v-2H2v2zm14 0h-2v6h2v-6zM15 0h4v2h-4V0zm4 8h-4v2h4V8zm0-6h2v6h-2V2zm5 12h-2v4h-4v2h6v-6zm-6-2h4v2h-4v-2z" fill="currentColor"/>
+                </svg>                
+                队伍
+            </div>
+            <div class="config-card-widget"></div>
+        </div>
+        <div class="config-card" id="config-gameStat">
+            <div class="config-card-title">
+                <svg class="config-icon" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15 2h2v2h4v18H3V4h4V2h2v2h6V2zM5 8h14V6H5v2zm0 2v10h14V10H5z" fill="currentColor"/>
+                </svg>        
+                赛事
+            </div>
+            <div class="config-card-widget"></div>
+        </div>
+        <div class="config-card" id="config-scoreBoardConfig">
+            <div class="config-card-title">
+                <svg class="config-icon" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M21 3H3v18h18V3zM5 19V5h14v14H5zM9 7H7v8h2V7zm2 0h2v4h-2V7zm6 0h-2v10h2V7z" fill="currentColor"/>
+                </svg>    
+                看板
+            </div>
+            <div class="config-card-widget"></div>
+        </div>
+    </div>
     <!--登录页面-->
     <div id="login-layout">
         <h1>登录控制台</h1>
@@ -21,7 +73,7 @@
             <label for="verifycode">验证码:</label><br>
             <div style="display: flex;">
                 <input type="verifycode" id="verifycode" name="verifycode" required>
-                <button type="submit" id="submit">
+                <button title="submit" type="submit" id="submit">
                     <svg style="width:20px" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2H4zm10-4h2v2h-2V7zm0 0h-2V5h2v2zm0 10h2v-2h-2v2zm0 0h-2v2h2v-2z" fill="currentColor"/>
                     </svg>                    
@@ -35,10 +87,11 @@
         (C) 2023 <a href="https://github.com/kawashiro-ryofu">kawashiro-ryofu</a>. License: <a href="https://www.mozilla.org/en-US/MPL/2.0/">MPL-2.0</a> <a href="github.com/kawashiro-ryofu/funkyScoreboard">Github项目页</a>
     </footer>
     <script>
+        // ==================赛事数据==================
         let gamedata = {
             status: -1, // 赛事状态 - -1: 需要配置，等待登录； 0: 等待开始； 1: 正在进行； 2: 已结束.
             startTime: 0, // 比赛开始时的UNIX时间戳 **此处需要修改，上一版本中Py3的Unix时间戳与JS时间单位不同！**
-            section: 1, //  比赛场次，大于0整数,
+            section: 1, //  比赛场次，大于0整数
             team: {
                 A: {
                     name: "诸葛孔明", // 队伍A的名字
@@ -51,7 +104,9 @@
             },
             message: `Funky Scoreboard` // 计分板页脚小标题
         }
-        // 删除无用token
+        // ==================登录操作==================
+        // 删除失效token
+        var loginStatus = 0
         function resetToken(){
             localStorage.removeItem('authorization');
             document.getElementById('loginForm').style.display = 'block' 
@@ -69,55 +124,85 @@
                 redirect: 'follow'
             })
         }
+        //  检查登录状态
+        function checkUpLogin(){
+            let resetJWT = false
+            function checkUpLoginStatus(token){
+                fetch('/api/confirmLogin', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then(Response => {
+                    if(Response.status != 200){
+                        if(parseInt(Response.status / 100) == 4)resetJWT = true
+                        let e = Response.status + ' ' + Response.statusText
+                        throw new Error(e)
+                    }
+                    return Response.json()
+                }).then(data => {
+                    if(!loginStatus)toast(data.message, 1)
+                    loginStatus = 1
+                    setTimeout(()=>{
+                        document.querySelector('#login-layout').style.display = "none" 
+                        document.querySelector('#config-layout').style.display = "block"
+                        document.querySelector('footer').style.display = "none"
+                        document.title = "控制台"
+                    }, 5000)
 
-        function checkUpLoginStatus(token){
-            fetch('/api/confirmLogin', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
+                })
+                .catch(error => {
+                    //loginStatus = 0
+                    //resetToken()
+                    console.error(error)
+                    toast(`${error}`, 3)
+                    if(resetJWT){
+                        toast(`凭证无效`, 3)
+                        resetToken()
+                    }
+                    
+                })
+            }
+            
+            new Promise((resolve, reject) => {
+                if(localStorage.getItem('authorization') != null){
+                    let localauth = JSON.parse(localStorage.getItem('authorization'))
+                    let timestamp = localauth.timestamp
+                    let token = localauth.token
+                    if (new Date().getTime() <= timestamp + 86400000) {
+                        resolve(token);
+                    } else {
+                        reject('未登录');
+                    }
                 }
-            }).then(Response => {
-                if(Response.status != 200){
-                    let e = Response.status + ' ' + Response.statusText
-                    throw new Error(e)
-                }
-                return Response.json()
-            }).then(data => {
-                toast(data.message, 1)
-                document.querySelector('#login-layout').style.display = "none" 
+                else reject('未登录')
             })
-            .catch(error => {
-                console.error(error)
+            .then(token => {
+                checkUpLoginStatus(token)
+            }).then(()=>{
+                if(!loginStatus){
+                    document.querySelector('footer').style.display = 'initial'
+                    document.querySelector('#login-layout').style.display = 'initial'
+                    document.querySelector('#config-layout').style.display = 'none'
+                }else{
+                    document.querySelector('footer').style.display = 'none'
+                    document.querySelector('#login-layout').style.display = 'none'
+                    document.querySelector('#config-layout').style.display = 'initial'
+                }
+            })
+            //  如果本地的authorization不存在或无效
+            .catch((err) => {
+                //console.log(localStorage)
+                loginStatus = 0
+                console.error(err)
                 resetToken()
             })
         }
-
-        new Promise((resolve, reject) => {
-            if(localStorage.getItem('authorization') != null){
-                let localauth = JSON.parse(localStorage.getItem('authorization'))
-                let timestamp = localauth.timestamp
-                let token = localauth.token
-                if (new Date().getTime() <= timestamp + 86400000) {
-                    resolve(token);
-                } else {
-                    reject('未登录');
-                }
-            }
-            else reject('未登录')
-        })
-        .then(token => {
-            checkUpLoginStatus(token)
-        })
-        //  如果本地的authorization不存在或无效
-        .catch((err) => {
-            //console.log(localStorage)
-            console.error(err)
-            resetToken()
-        })
+        checkUpLogin()
 
         const form = document.getElementById('loginForm');
         const verifycodeInput = document.getElementById('verifycode');
-        // 监听登录
+        // 登录
         form.addEventListener('submit', () => {
             event.preventDefault();
 
@@ -135,7 +220,7 @@
                     }
                     else{
                         toast(data.message, 1)
-                        setTimeout(()=>{location.href = location.href}, 3000)
+                        setTimeout(()=>{location.reload()}, 3000)
                     }
                     return data
                 })
@@ -148,6 +233,7 @@
                 })
 
         })
+        // ==================界面==================
         //  弹出简易toast提示
         //  type: 0或其他 - 普通的提示；1 - 成功的提示；2 - 警告的提示；3 - 错误的提示
         function toast(content, type){
@@ -161,26 +247,31 @@
                 '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 5h2v2H5V5zm4 4H7V7h2v2zm2 2H9V9h2v2zm2 0h-2v2H9v2H7v2H5v2h2v-2h2v-2h2v-2h2v2h2v2h2v2h2v-2h-2v-2h-2v-2h-2v-2zm2-2v2h-2V9h2zm2-2v2h-2V7h2zm0 0V5h2v2h-2z" fill="currentColor"/></svg>'
             ] 
             //  背景色
-            var color;
+            var bgcolor;
+            var fontColor;
             const icon = `<div class="icon" style="float: left;">${iconset[type]}</div>`
             content = `${icon}<div style="float:right;width: 80%;height: 100%; overflow: hidden; text-overflow: ellipsis">${content}</div>`
             switch(type){
                 case 3:
-                    color = 'lightcoral';
+                    bgcolor = 'pink';
+                    fontColor = 'red';
                     break;
                 case 2:
-                    color = 'yellow';
+                    bgcolor = 'lightyellow';
+                    fontColor = 'darkorange'
                     break;
                 case 1:
-                    color = 'lightgreen';
+                    bgcolor = 'lightgreen';
+                    fontColor = 'green'
                     break;
                 default:
-                    color = '#EEE'
+                    bgcolor = '#EEE'
+                    fontColor = 'black'
             }
 
             const toastLayout = document.getElementById('toast-layout')
             const toastN = new Date().getTime()
-            toastLayout.innerHTML += `<div class="toast" style="background-color: ${color}" data="${toastN}">${content}</div>`
+            toastLayout.innerHTML += `<div class="toast" style="background-color: ${bgcolor}; color: ${fontColor}; border: solid ${fontColor}" data="${toastN}">${content}</div>`
             document.querySelector(`[data="${toastN}"]`).classList.add('toastAnimIn')
             setTimeout(()=>{
                 document.querySelector(`[data="${toastN}"]`).classList.remove('toastAnimIn')
@@ -188,5 +279,63 @@
                 setTimeout(()=>{document.querySelector(`[data="${toastN}"]`).remove()}, 2000)
             }, 5000)
         }
+        
+        setInterval(()=>{
+            checkUpLogin()
+        },2500)
+        // ==================配置控件==================
+        //  （移动适配）
+        //  setCurrentCard
+        //      n:
+        //      移动端：当前显示的卡片
+        //      PC端：  最近鼠标指针悬停过的卡片
+        //      数值： 0 - 队伍；1 - 赛事；2 - 看板
+        var currentCard;
+        setCurrentCard(0)
+        function setCurrentCard(n){
+            currentCard = 0
+            document.querySelectorAll('#config-navibar button').forEach(element=>{
+                element.classList.remove('active')
+            })
+            if(window.innerWidth <= 850){
+                switch(n){
+                    case 0:
+                        document.querySelector('#config-gameInfo').style.display = 'initial';
+                        document.querySelector('#config-gameStat').style.display = 'none';
+                        document.querySelector('#config-scoreBoardConfig').style.display = 'none';
+                        document.querySelector('#config-gameInfo-button').classList.add('active');
+                        break;
+                    case 1:
+                        document.querySelector('#config-gameInfo').style.display = 'none';
+                        document.querySelector('#config-gameStat').style.display = 'initial';
+                        document.querySelector('#config-scoreBoardConfig').style.display = 'none';
+                        document.querySelector('#config-gameStat-button').classList.add('active') 
+                        break;
+                    case 2:
+                        document.querySelector('#config-gameInfo').style.display = 'none';  
+                        document.querySelector('#config-gameStat').style.display = 'none';
+                        document.querySelector('#config-scoreBoardConfig').style.display = 'initial';
+                        document.querySelector('#config-scoreBoardConfig-button').classList.add('active') 
+                        break;
+                    default: setCurrentCard(0)
+                }
+            }else{
+                document.querySelector('#config-gameInfo').style.display = 'initial';
+                document.querySelector('#config-gameStat').style.display = 'initial';
+                document.querySelector('#config-scoreBoardConfig').style.display = 'initial';
+            }
+        }
+        document.querySelector('#config-gameInfo').addEventListener('mouseenter', ()=>{
+            setCurrentCard(0)
+        })
+        document.querySelector('#config-gameStat').addEventListener('mouseenter', ()=>{
+            setCurrentCard(1)
+        })
+        document.querySelector('#config-scoreBoardConfig').addEventListener('mouseenter', ()=>{
+            setCurrentCard(2)
+        })
+        window.addEventListener('resize', ()=>{
+            if(window.innerWidth > 850)setCurrentCard(currentCard)
+        })
     </script>
 </body>

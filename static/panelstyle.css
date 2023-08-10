@@ -1,12 +1,20 @@
+:root{
+    color-scheme: light dark;
+}
 @font-face {
     font-family: pixel;
     src: url('font.ttf');
 }
 body{
-    overflow: hidden;
     font-family: 'pixel';
     padding: 30px;
     font-size: 24px;
+}
+body[light]{
+    color: black;
+}
+body[dark]{
+    color: white
 }
 input{
 	border: solid 1px;
@@ -17,7 +25,9 @@ input{
 }
 button{
     border: solid 2px;
-    margin: 5px;
+    font-family: 'pixel';
+    font-size: 18px;
+    padding: 4px;
 }
 @media screen and (max-height: 600px)  {
     footer{
@@ -31,7 +41,6 @@ button{
 }
 footer{
     font-size: 20px;
-    z-index: -10;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -68,6 +77,7 @@ footer{
     left: -300px;
     background: white;
     border: 3px solid black;
+    min-width: 35vh;
     width: 35vh;
     height: 80px;
     padding: 5px;
@@ -77,10 +87,95 @@ footer{
 	width: 40px;
 }
 #loginForm{
-	background: #CCC;
 	padding: 16px;
 	width: 300px;
 }
 #loginForm input{
+    font-size: 24px;
     width: 100%;
+    height: auto;
+}
+#loginForm #submit{
+    font-size: 0px;
+}
+
+#config-layout{
+    display: none;
+    position: initial;
+    z-index: 5;
+    width: -moz-available;
+    width: -webkit-available;
+    overflow-x: auto;
+}
+#config-navibar{
+    display: none;
+}
+.config-card {
+    position: relative;
+    width: 360px;
+    min-height: 360px;
+    height: 480px;
+    border: solid 5px;
+    margin: 10px;
+    float: left;
+}
+
+#config-gameInfo{
+    background-color: rgba(255, 166, 0, 0.5);
+    border: solid rgba(255, 255, 0, 0.2);
+}
+
+#config-gameStat{
+    background-color: rgba(0, 0, 0, 0.5);
+    border: solid gray;
+    width: calc(90% - 2*360px);
+    min-width: 360px;
+}
+
+#config-scoreBoardConfig{
+    background-color: rgba(0, 255, 255, 0.5);
+    border: solid aqua
+}
+.config-card-title{
+    border-bottom: dashed 3px;
+    display: flex;
+}
+.config-card-widget{
+    height: 90%;
+    width: 100%;
+}
+.config-icon{
+    width: 20px;
+}
+button .config-icon{
+    width: 18px;
+    height: 18px;
+}
+@media screen and (max-width: 850px){
+    .config-card {
+        width: calc(90% - 20px) !important;
+        min-width: 250px !important;
+        margin-left: 0px;
+    }
+    .config-card-title{
+        display: none;
+    }
+    #config-navibar{
+        display: block;
+    }
+}
+
+#config-gameInfo-button.active{
+    background-color: rgba(255, 166, 0, 0.5);
+    border: solid rgba(255, 255, 0, 0.2);
+}
+
+#config-gameStat-button.active{
+    background-color: rgba(0, 0, 0, 0.5);
+    border: solid gray;
+}
+
+#config-scoreBoardConfig-button.active{
+    background-color: rgba(0, 255, 255, 0.5);
+    border: solid aqua
 }

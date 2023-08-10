@@ -207,7 +207,7 @@ app.get('/api/confirmLogin', (req, res) => {
 						message: '认证通过',
 						user: decoded
 					});
-					log.info(`${ req.ip } 认证通过`)
+					//log.info(`${ req.ip } 认证通过`)
 				}
 			});
 

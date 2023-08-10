@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
 const version = 'v' + require(__dirname + '/package.json').version
-
+require('./server/server')
 
 function createWindow () {
   const win = new BrowserWindow({
