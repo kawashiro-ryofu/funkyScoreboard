@@ -182,7 +182,9 @@ body{
     font-size: 20px;
     padding-left: 36px
 }
-
+#loginguide-verifycode{
+    font-size: 32px;
+}
 #loginguide-log::-webkit-scrollbar {
     width: 0
 }

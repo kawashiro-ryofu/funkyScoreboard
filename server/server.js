@@ -20,6 +20,9 @@ const fs = require('fs');
 const { sep } = require('path'); 
 const moment = require('moment')
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 //  单用户
 let loggedIn = false
 //  看板默认数据
@@ -173,52 +176,115 @@ app.get('/api/getcontrolpanel', (req, res) => {
 	log.warn(`${ req.ip } 试图获取 /api/getcontrolpanel 被拒绝`)
 })
 
-
-app.get('/api/protected', (req, res) => {
-
+//	验证登录
+app.get('/api/confirmLogin', (req, res) => {
 	try {
-
 		// 获取客户端发送的 JWT
 		const authHeader = req.headers.authorization;
+		if (
+			typeof authHeader !== 'undefined' && 
+			(authHeader.split(' ').length === 2 && authHeader.split(' ')[0] === 'Bearer')
+			) {
 
-		if (typeof authHeader !== 'undefined') {
-			// 检查 Authorization 头部是否存在
+			// 检查 Authorization 头部是否以 'Bearer' 开头
+			const token = authHeader.split(' ')[1];
 
-			const authHeaderParts = authHeader.split(' ');
-			if (authHeaderParts.length === 2 && authHeaderParts[0] === 'Bearer') {
-				// 检查 Authorization 头部是否以 'Bearer' 开头
-				const token = authHeaderParts[1];
-
-				// 验证 JWT
-				jwt.verify(token, secretKey, (err, decoded) => {
-					if (err) {
-						// JWT 验证失败
-						res.status(403)
-							.json({
-								message: '拒绝访问'
-							});
-						//console.log(err)
-						log.warn(`${ req.ip } JWT无效`)
-						log.debug(err.name + ' ' + err.message)
-
-					} else {
-						// JWT 验证成功
-						res.json({
-							message: '认证通过',
-							user: decoded
+			// 验证 JWT
+			jwt.verify(token, secretKey, (err, decoded) => {
+				if (err) {
+					// JWT 验证失败
+					res.status(403)
+						.json({
+							message: '拒绝访问'
 						});
-						log.info(`${ req.ip } 认证通过`)
-					}
-				});
+					//console.log(err)
+					log.warn(`${ req.ip } JWT无效`)
+					log.debug(err.name + ' ' + err.message)
 
-			} else {
-				// Authorization 头部格式错误，返回错误响应
-				res.status(401)
-					.json({
-						message: '不支持的请求'
+				} else {
+					// JWT 验证成功
+					res.json({
+						message: '认证通过',
+						user: decoded
 					});
-				log.warn(`${ req.ip } 发送了不支持的请求`)
-			}
+					log.info(`${ req.ip } 认证通过`)
+				}
+			});
+
+		} else {
+			// Authorization 头部不存在，返回错误响应
+			res.status(401)
+				.json({
+					message: '不支持的请求'
+				});
+			log.warn(`${ req.ip } 发送了不支持的请求`)
+		}
+	} catch (err) {
+		log.error(`${err.name}: ${err.message}`)
+		log.debug(`${err.stack}`)
+	}
+});
+
+//	更改赛事数据
+app.post('/api/applydata', (req, res) => {
+
+	function applyData(newdat){
+		let olddat = gamedata
+		gamedata = {
+			status: newdat.status ?? olddat.status, 
+			startTime: newdat.startTime ?? olddat.startTime, 
+			section: newdat.section ?? olddat.section, 
+			team: {
+				A: {
+					name: newdat.team.A.name ?? olddat.team.A.name, 
+					score: newdat.team.A.score  ?? olddat.team.A.score
+				},
+				B: {
+					name: newdat.team.B.name ?? olddat.team.B.name, 
+					score: newdat.team.B.score ?? olddat.team.B.score
+				}
+			},
+			message: newdat.message ?? olddat.message
+		}
+	}
+	try {
+		// 获取客户端发送的 JWT
+		const authHeader = req.headers.authorization;
+		if (
+			typeof authHeader !== 'undefined' && 
+			(authHeader.split(' ').length === 2 && authHeader.split(' ')[0] === 'Bearer')
+			) {
+
+			// 检查 Authorization 头部是否以 'Bearer' 开头
+			const token = authHeader.split(' ')[1];
+
+			// 验证 JWT
+			jwt.verify(token, secretKey, (err, decoded) => {
+				if (err) {
+					// JWT 验证失败
+					res.status(403)
+						.json({
+							message: '拒绝访问'
+						});
+					//console.log(err)
+					log.warn(`${ req.ip } JWT无效`)
+					log.debug(err.name + ' ' + err.message)
+
+				} else {
+					// JWT 验证成功
+					/**/
+					log.debug(req.body)
+					applyData(req.body)
+					log.debug(gamedata)
+					res.json({
+						message: '认证通过',
+						user: decoded
+					});
+					log.info(`${ req.ip } 认证通过`)
+					
+				}
+			});
+
 		} else {
 			// Authorization 头部不存在，返回错误响应
 			res.status(401)
@@ -264,12 +330,12 @@ app.get('/', (req, res) => {
 
 //  404
 app.use('*', (req, res) => {
-  log.warn(`${req.ip} 访问了不存在的页面`)
-	res.status(404)
-		.json({
-			message: '页面不存在'
-		})
-})
+	log.warn(`${req.ip} 访问了不存在的页面`)
+	  res.status(404)
+		  .json({
+			  message: '页面不存在'
+		  })
+  })
 
 //	日志与临时目录
 var filelog = ""

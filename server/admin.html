@@ -6,28 +6,72 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 </head>
 <body>
-    <div id="main-wrapper">
-        <h1>控制台</h1>
+    <svg style="position: absolute;top: 5px;left: 5px;" class="icon" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M3 3h8v10H3V3zm2 2v6h4V5H5zm8-2h8v6h-8V3zm2 2v2h4V5h-4zm-2 6h8v10h-8V11zm2 2v6h4v-6h-4zM3 15h8v6H3v-6zm2 2v2h4v-2H5z" fill="currentColor"/>
+    </svg>
+    <!--用于toast弹窗-->
+    <div id="toast-layout"></div>
+    <!--登录页面-->
+    <div id="login-layout">
+        <h1>登录控制台</h1>
         <form id="loginForm" style="display: none;">
-            <label for="verifycode">验证码:</label>
-            <input type="verifycode" id="verifycode" name="verifycode" required>
-            <input type="submit" value="Go!">
+            <svg fill="none" class="icon" style="width: 24px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M15 2H9v2H7v4H4v14h16V8h-3V4h-2V2zm0 2v4H9V4h6zm-6 6h9v10H6V10h3zm4 3h-2v4h2v-4z" fill="currentColor"/>
+            </svg>            
+            <label for="verifycode">验证码:</label><br>
+            <div style="display: flex;">
+                <input type="verifycode" id="verifycode" name="verifycode" required>
+                <button type="submit" id="submit">
+                    <svg style="width:20px" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2H4zm10-4h2v2h-2V7zm0 0h-2V5h2v2zm0 10h2v-2h-2v2zm0 0h-2v2h2v-2z" fill="currentColor"/>
+                    </svg>                    
+                </button>
+            </div>
         </form>
     </div>
     <footer>
         <hr>
-        Funky Scoreboard<br>
-        (C) 2023 <a href="https://github.com/kawashiro-ryofu">kawashiro-ryofu</a>, Comply with the <a href="https://www.mozilla.org/en-US/MPL/2.0/">MPL-2.0</a> license
+        <img src="/static/favicon.ico" style="width: 18px">Funky Scoreboard, 
+        (C) 2023 <a href="https://github.com/kawashiro-ryofu">kawashiro-ryofu</a>. License: <a href="https://www.mozilla.org/en-US/MPL/2.0/">MPL-2.0</a> <a href="github.com/kawashiro-ryofu/funkyScoreboard">Github项目页</a>
     </footer>
     <script>
+        let gamedata = {
+            status: -1, // 赛事状态 - -1: 需要配置，等待登录； 0: 等待开始； 1: 正在进行； 2: 已结束.
+            startTime: 0, // 比赛开始时的UNIX时间戳 **此处需要修改，上一版本中Py3的Unix时间戳与JS时间单位不同！**
+            section: 1, //  比赛场次，大于0整数,
+            team: {
+                A: {
+                    name: "诸葛孔明", // 队伍A的名字
+                    score: 0 // 队伍A得分
+                },
+                B: {
+                    name: "王司徒", // 队伍B的名字
+                    score: 0 // 队伍B得分
+                }
+            },
+            message: `Funky Scoreboard` // 计分板页脚小标题
+        }
         // 删除无用token
         function resetToken(){
             localStorage.removeItem('authorization');
             document.getElementById('loginForm').style.display = 'block' 
         }
 
-        function goToAdmin(token){
-            fetch('/api/protected', {
+        //  更新赛事数据
+        function applyData(){
+            fetch('/api/applydata', {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${JSON.parse(localStorage.getItem('authorization')).token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(gamedata),
+                redirect: 'follow'
+            })
+        }
+
+        function checkUpLoginStatus(token){
+            fetch('/api/confirmLogin', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -39,7 +83,8 @@
                 }
                 return Response.json()
             }).then(data => {
-                window.alert(data.message)
+                toast(data.message, 1)
+                document.querySelector('#login-layout').style.display = "none" 
             })
             .catch(error => {
                 console.error(error)
@@ -61,7 +106,7 @@
             else reject('未登录')
         })
         .then(token => {
-            goToAdmin(token)
+            checkUpLoginStatus(token)
         })
         //  如果本地的authorization不存在或无效
         .catch((err) => {
@@ -86,9 +131,12 @@
                 .then(data => {
                     console.log(data)
                     if(respondstatus != 200){
-                        window.alert(data.message)
+                        toast(data.message, 3)
                     }
-                    window.alert(data.message)
+                    else{
+                        toast(data.message, 1)
+                        setTimeout(()=>{location.href = location.href}, 3000)
+                    }
                     return data
                 })
                 .then(data => {
@@ -98,9 +146,47 @@
                     }))
                     return 0
                 })
-                .then(()=>{
-                    location.href = location.href
-                })
+
         })
+        //  弹出简易toast提示
+        //  type: 0或其他 - 普通的提示；1 - 成功的提示；2 - 警告的提示；3 - 错误的提示
+        function toast(content, type){
+            if(typeof(type) != 'number' || (type < 0 || type >= 4))type = 0
+            //  图标
+            //  pixelarticons https://pixelarticons.com/
+            const iconset = [
+                '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 2H2v14h2V4h16v12h-8v2h-2v2H8v-4H2v2h4v4h4v-2h2v-2h10V2z" fill="currentColor"/></svg>', 
+                '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 6h2v2h-2V6zm-2 4V8h2v2h-2zm-2 2v-2h2v2h-2zm-2 2h2v-2h-2v2zm-2 2h2v-2h-2v2zm-2 0v2h2v-2H8zm-2-2h2v2H6v-2zm0 0H4v-2h2v2z" fill="currentColor"/></svg>', 
+                '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3h16v2H5v14h14v2H3V3zm18 0h-2v18h2V3zM11 15h2v2h-2v-2zm2-8h-2v6h2V7z" fill="currentColor"/></svg>', 
+                '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 5h2v2H5V5zm4 4H7V7h2v2zm2 2H9V9h2v2zm2 0h-2v2H9v2H7v2H5v2h2v-2h2v-2h2v-2h2v2h2v2h2v2h2v-2h-2v-2h-2v-2h-2v-2zm2-2v2h-2V9h2zm2-2v2h-2V7h2zm0 0V5h2v2h-2z" fill="currentColor"/></svg>'
+            ] 
+            //  背景色
+            var color;
+            const icon = `<div class="icon" style="float: left;">${iconset[type]}</div>`
+            content = `${icon}<div style="float:right;width: 80%;height: 100%; overflow: hidden; text-overflow: ellipsis">${content}</div>`
+            switch(type){
+                case 3:
+                    color = 'lightcoral';
+                    break;
+                case 2:
+                    color = 'yellow';
+                    break;
+                case 1:
+                    color = 'lightgreen';
+                    break;
+                default:
+                    color = '#EEE'
+            }
+
+            const toastLayout = document.getElementById('toast-layout')
+            const toastN = new Date().getTime()
+            toastLayout.innerHTML += `<div class="toast" style="background-color: ${color}" data="${toastN}">${content}</div>`
+            document.querySelector(`[data="${toastN}"]`).classList.add('toastAnimIn')
+            setTimeout(()=>{
+                document.querySelector(`[data="${toastN}"]`).classList.remove('toastAnimIn')
+                document.querySelector(`[data="${toastN}"]`).classList.add('toastAnimOut')
+                setTimeout(()=>{document.querySelector(`[data="${toastN}"]`).remove()}, 2000)
+            }, 5000)
+        }
     </script>
 </body>

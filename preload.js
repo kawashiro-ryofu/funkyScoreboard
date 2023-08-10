@@ -120,10 +120,10 @@ function applyData() {
 	function gamedataDisplay() {
 		//Calc Time
 		let t = Math.round(new Date()
-			.getTime() / 1000) - startTime
+			.getTime() / 1000) - (startTime/1000)
 		let tmin = parseInt((Math.round(new Date()
-			.getTime() / 1000) - startTime) / 60)
-		let tsec = t - tmin * 60
+			.getTime() / 1000) - (startTime/1000)) / 60)
+		let tsec = parseInt(t - tmin * 60)
 		let tmins = tmin.toString()
 		if (tmins.length < 2) tmins = '0' + tmins
 		let tsecs = tsec.toString()

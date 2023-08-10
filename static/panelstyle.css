@@ -5,11 +5,82 @@
 body{
     overflow: hidden;
     font-family: 'pixel';
+    padding: 30px;
+    font-size: 24px;
+}
+input{
+	border: solid 1px;
+	font-family: 'pixel';
+    margin: 5px;
+    height: 24px;
+    font-size: 20px;
+}
+button{
+    border: solid 2px;
+    margin: 5px;
+}
+@media screen and (max-height: 600px)  {
+    footer{
+        display: none;
+    }
+}
+@media screen and (max-width: 400px)  {
+    footer{
+        display: none;
+    }
 }
 footer{
-    position: absolute;
+    font-size: 20px;
+    z-index: -10;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     padding: 10px;
+}
+#toast-layout{
+    position: absolute;
+    z-index: 999;
+    top: 0px;
+    left: 0px;
+    margin: 10px;
+}
+
+@keyframes toastIn {
+    0% {left: -300px }
+    25%{left: 10px}
+    100%{left: 10px}
+}
+
+@keyframes toastOut {
+    0% {left: 10px }
+    100%{left: -999px}
+}
+
+.toastAnimIn{
+    animation: toastIn 5s;
+}
+.toastAnimOut{
+    animation: toastOut 5s;
+}
+.toast{
+    position: relative;
+    left: -300px;
+    background: white;
+    border: 3px solid black;
+    width: 35vh;
+    height: 80px;
+    padding: 5px;
+    margin: 5px;
+}
+.icon{
+	width: 40px;
+}
+#loginForm{
+	background: #CCC;
+	padding: 16px;
+	width: 300px;
+}
+#loginForm input{
+    width: 100%;
 }
