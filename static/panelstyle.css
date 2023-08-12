@@ -28,6 +28,10 @@ button{
     font-family: 'pixel';
     font-size: 18px;
     padding: 4px;
+    transition: background-color .2s;
+}
+button:hover{
+    background-color: gray;
 }
 @media screen and (max-height: 600px)  {
     footer{
@@ -183,7 +187,8 @@ button .config-icon{
     border: solid aqua
 }
 .config-card-widget form{
-    padding: 10px
+    padding: 10px;
+    display: flow-root;
 }
 .config-card-widget form *{
     max-width: calc(100% - 20px);
@@ -199,11 +204,18 @@ button .config-icon{
 }
 
 .config-card-widget .config-card-widget-checkbox{
-    /*position: relative;*/
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    display: inline-block;
 }
 
 .config-card-widget .config-card-widget-checkbox input[type=checkbox]{
-    visibility: hidden;
+    margin-left: 0px;
+    width: 20px;
+    z-index: 10;
+    position: absolute;
+    opacity: 0;
 }
 
 .config-card-widget .config-card-widget-checkbox label{
@@ -216,4 +228,38 @@ button .config-icon{
 
 .config-card-widget h3{
     margin: 0px;
+}
+
+.config-card-widget-checkbox svg{
+    width: 24px;
+    position: absolute;
+}
+.config-card-widget-checkbox[value='false'] .config-card-widget-checkbox-display-off{
+    display: inline-block;
+}
+.config-card-widget-checkbox[value='true'] .config-card-widget-checkbox-display-off{
+    display: none;
+}
+.config-card-widget-checkbox[value='false'] .config-card-widget-checkbox-display-on{
+    display: none;
+}
+.config-card-widget-checkbox[value='true'] .config-card-widget-checkbox-display-on{
+    display: inline-block;
+}
+
+#config-scoreBoardConfig #config-scoreBoardConfig-dangerZone{
+    border: dashed 5px red;
+    height: max-content;
+}
+#config-scoreBoardConfig #config-scoreBoardConfig-dangerZone button{
+    background-color: darkred;
+    color: white;
+    width: -moz-available;
+    width: -webkit-available;
+    margin-top: 10px;
+    transition: background-color .2s;
+}
+
+#config-scoreBoardConfig #config-scoreBoardConfig-dangerZone button:hover{
+    background-color: red;
 }

@@ -279,10 +279,10 @@ app.post('/api/applydata', (req, res) => {
 					applyData(req.body)
 					log.debug(gamedata)
 					res.json({
-						message: '认证通过',
+						message: '修改已生效',
 						user: decoded
 					});
-					log.info(`${ req.ip } 认证通过`)
+					log.info(`${ req.ip } 修改已生效`)
 					
 				}
 			});

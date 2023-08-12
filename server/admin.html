@@ -46,7 +46,7 @@
                 <h3>命名队伍</h3>
                 <form>
                     <label>队伍A</label><br>
-                    <input type="text" name="队伍A" value="" id="config-gameInfo-name-teamA"></input><br><br>
+                    <input type="text" name="队伍A" value="" id="config-gameInfo-name-teamA"></input><br>
                     <label>队伍B</label><br>
                     <input type="text" name="队伍B" value="" id="config-gameInfo-name-teamB"></input><br>
                     <button name="保存并生效" id="config-gameInfo-submit">
@@ -64,7 +64,11 @@
                 </svg>        
                 赛事
             </div>
-            <div class="config-card-widget"></div>
+            <div class="config-card-widget">
+                <div id="config-gameStat-startGame">
+
+                </div>
+            </div>
         </div>
         <div class="config-card" id="config-scoreBoardConfig">
             <div class="config-card-title">
@@ -77,12 +81,18 @@
                 <h3>计分板属性</h3>
                 <form>
                     <label>小标题内容</label><br>
-                    <input type="text" name="小标题内容" value="" id="config-scoreBoardConfig-subtitle"></input><br><br>
+                    <input type="text" name="小标题内容" value="" id="config-scoreBoardConfig-subtitle"></input><br>
                     <label>音效</label><br>
-                    <div id="config-scoreBoardConfig-sfx" class="config-card-widget-checkbox">
-                        <input type="checkbox" name="音效">启用</input>
-                        <label for="switch"></label>
+                    <div id="config-scoreBoardConfig-sfx" class="config-card-widget-checkbox" value="false">
+                        <input type="checkbox" id="config-scoreBoardConfig-sfx-checkbox" name="音效">
+                        <svg class="config-card-widget-checkbox-display-off" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M3 3h18v18H3V3zm16 16V5H5v14h14z" fill="currentColor"/>
+                        </svg>
+                        <svg class="config-card-widget-checkbox-display-on" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M5 3H3v18h18V3H5zm0 2h14v14H5V5zm4 7H7v2h2v2h2v-2h2v-2h2v-2h2V8h-2v2h-2v2h-2v2H9v-2z" fill="currentColor"/>
+                        </svg>
                     </div>
+                    <label>启用音效</label>
                     <br>
                     <button name="保存并生效" id="config-scoreBoardConfig-submit">
                         <svg style="width: 20px" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -90,6 +100,24 @@
                         </svg>保存并生效
                     </button>
                 </form>
+                <div id="config-scoreBoardConfig-dangerZone">
+                    <h3>危险操作</h3>
+                    <form>
+                        <label style="color:red; background-color: yellow;"><svg style="width: 20px" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M3 3h16v2H5v14h14v2H3V3zm18 0h-2v18h2V3zM11 15h2v2h-2v-2zm2-8h-2v6h2V7z" fill="currentColor"/>
+                        </svg>请谨慎使用！</label>
+                        <button name="撤销" id="config-scoreBoardConfig-dangerZone-undo">
+                            <svg style="width: 24px" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M8 4h2v2H8V4zm10 6V8H8V6H6v2H4v2h2v2h2v2h2v-2H8v-2h10zm0 8v-8h2v8h-2zm0 0v2h-6v-2h6z" fill="currentColor"/>
+                            </svg>撤销
+                        </button><br><br>
+                        <button name="重置所有数据" id="config-scoreBoardConfig-dangerZone-reset">
+                            <svg fill="none" style="width: 20px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M5 3H3v18h18V3H5zm14 2v14H5V5h14zm-3 6H8v2h8v-2z" fill="currentColor"/>
+                            </svg>重置所有数据
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -139,19 +167,21 @@
         //  存放赛事数据修改历史的栈
         var historyStack = []
         //  操作栈的函数
-        //      action: 0 - 生效栈顶（出栈）; 1 - 保存当前（入栈）; 
+        //      action: 0 - 生效栈顶（出栈）; 1 - 保存当前（入栈）; 2 - 查询是否为空
         function gamedataStack(action){
             const localHSname = `historyStack_${location.href.split('/')[location.href.split('/').length-1]}`
+            historyStack = historyStack.filter(element => element !== undefined)
 
             function push(element) {
-                historyStack.push(element);
+                let j = JSON.stringify(element)
+                historyStack.push(j);
             }
             function pop() {
                 if (isEmpty()) {
                     throw Error("栈为空")
                     return -1
                 }
-                return historyStack.pop();
+                else return JSON.parse(historyStack.pop());
             }
             function peek() {
                 if (isEmpty()) {
@@ -162,10 +192,7 @@
             }
             //  栈内至少保留默认记录
             function isEmpty() {
-                if(historyStack.length == 0){
-                    push(defaultGamedata)
-                }
-                return historyStack.length === 1;
+                return historyStack.length === 0;
             }
             //  将栈保存至localStorage
             function save2local() {
@@ -174,22 +201,30 @@
 
             //  从localStorage提取之前的记录
             if(isEmpty() && localStorage.getItem(localHSname) != null){
-                historyStack = JSON.parse(localStorage.getItem(localHSname))
-                gamedata = historyStack[historyStack.length -1]
+                if(JSON.parse(localStorage.getItem(localHSname)).length){
+                    historyStack = JSON.parse(localStorage.getItem(localHSname))
+                    gamedata = historyStack[historyStack.length -1]
+                }
             }
 
             switch(action){
                 case 0: 
-                    gamedata = pop();
+                    let a = pop()
+                    save2local()
+                    return a;
                     break;
                 case 1: 
                     push(gamedata);
+                    save2local()
+                    break;
+                case 2:
+                    return isEmpty()
                     break;
                 default: break
             }
-            save2local()
+            
         }
-        gamedataStack()
+        gamedataStack(1)
         // ==================登录操作==================
         // 删除失效token
         var loginStatus = 0
@@ -201,14 +236,31 @@
 
         //  更新赛事数据
         function applyData(){
+            var token;
+            if(localStorage.getItem('authorization') != null)token = JSON.parse(localStorage.getItem('authorization')).token
+            else token = ''
             fetch('/api/applydata', {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${JSON.parse(localStorage.getItem('authorization')).token}`,
+                    "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(gamedata),
                 redirect: 'follow'
+            })
+            .then(Response => {
+                if(Response.status != 200){
+                    let e = Response.status + ' ' + Response.statusText
+                    throw new Error(e)
+                }
+                else return Response.json()
+            })
+            .then(data => {
+                toast(data.message,1)
+            })
+            .catch(err =>{
+                console.error(err)
+                toast(`操作失败：${err}`,3)
             })
         }
         //  检查登录状态
@@ -218,7 +270,7 @@
                 fetch('/api/confirmLogin', {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token ?? null}`
                     }
                 }).then(Response => {
                     if(Response.status != 200){
@@ -412,6 +464,16 @@
                 document.querySelector('#config-scoreBoardConfig').style.display = 'initial';
             }
         }
+
+        //  将数据应用到控件
+        function dataToWidget(){
+            document.querySelector('#config-gameInfo-name-teamA').value = gamedata.team.A.name 
+            document.querySelector('#config-gameInfo-name-teamB').value = gamedata.team.B.name 
+            document.querySelector('#config-scoreBoardConfig-subtitle').value = gamedata.message
+            document.querySelector('#config-scoreBoardConfig-sfx input[type="checkbox"]').checked = gamedata.sfx
+            document.querySelector('#config-scoreBoardConfig-sfx').setAttribute('value', gamedata.sfx)
+        }
+
         document.querySelector('#config-gameInfo').addEventListener('mouseenter', ()=>{
             setCurrentCard(0)
         })
@@ -427,13 +489,41 @@
         //  “队伍”卡片
         document.querySelector('#config-gameInfo-submit').addEventListener('click',()=>{
             event.preventDefault();
+            gamedataStack(1)
             gamedata.team.A.name = document.querySelector('#config-gameInfo-name-teamA').value 
             gamedata.team.B.name = document.querySelector('#config-gameInfo-name-teamB').value
-            gamedataStack(1)
+            applyData()
+            
         })
+        //  “看板”卡片
+        document.querySelector('#config-scoreBoardConfig-submit').addEventListener('click',()=>{
+            event.preventDefault();
+            gamedataStack(1)
+            gamedata.message = document.querySelector('#config-scoreBoardConfig-subtitle').value
+            gamedata.sfx = document.querySelector('#config-scoreBoardConfig-sfx input[type="checkbox"]').checked
+            applyData()
+            
+        })
+        document.querySelector('#config-scoreBoardConfig-sfx input[type="checkbox"]').addEventListener('change', ()=>{
+            document.querySelector('#config-scoreBoardConfig-sfx').setAttribute('value', document.querySelector('#config-scoreBoardConfig-sfx input[type="checkbox"]').checked) 
+        })
+        document.querySelector('#config-scoreBoardConfig-dangerZone-undo').addEventListener('click', ()=>{
+            event.preventDefault();
+            new Promise((resolve, reject) => {
+                if(gamedataStack(2))reject()
+                else resolve()
+            })
+            .then(()=>{
+                gamedata = gamedataStack(0)
+                dataToWidget()
+            })
+            .catch(()=>{
+                toast('已是最早的一次操作', 2)
+            })
+            
+        })
+        
         //  （初步配置时）
-        //  生效默认的赛事数据，即未被修改的gamedata
-        document.querySelector('#config-gameInfo-name-teamA').value = gamedata.team.A.name 
-        document.querySelector('#config-gameInfo-name-teamB').value = gamedata.team.B.name 
+        dataToWidget()
     </script>
 </body>
