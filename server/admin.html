@@ -42,7 +42,20 @@
                 </svg>                
                 队伍
             </div>
-            <div class="config-card-widget"></div>
+            <div class="config-card-widget">
+                <h3>命名队伍</h3>
+                <form>
+                    <label>队伍A</label><br>
+                    <input type="text" name="队伍A" value="" id="config-gameInfo-name-teamA"></input><br><br>
+                    <label>队伍B</label><br>
+                    <input type="text" name="队伍B" value="" id="config-gameInfo-name-teamB"></input><br>
+                    <button name="保存并生效" id="config-gameInfo-submit">
+                        <svg style="width: 20px"  fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M4 2h14v2H4v16h2v-6h12v6h2V6h2v16H2V2h2zm4 18h8v-4H8v4zM20 6h-2V4h2v2zM6 6h9v4H6V6z" fill="currentColor"/>
+                        </svg>保存并生效
+                    </button>
+                </form>
+            </div>
         </div>
         <div class="config-card" id="config-gameStat">
             <div class="config-card-title">
@@ -60,7 +73,24 @@
                 </svg>    
                 看板
             </div>
-            <div class="config-card-widget"></div>
+            <div class="config-card-widget">
+                <h3>计分板属性</h3>
+                <form>
+                    <label>小标题内容</label><br>
+                    <input type="text" name="小标题内容" value="" id="config-scoreBoardConfig-subtitle"></input><br><br>
+                    <label>音效</label><br>
+                    <div id="config-scoreBoardConfig-sfx" class="config-card-widget-checkbox">
+                        <input type="checkbox" name="音效">启用</input>
+                        <label for="switch"></label>
+                    </div>
+                    <br>
+                    <button name="保存并生效" id="config-scoreBoardConfig-submit">
+                        <svg style="width: 20px" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M4 2h14v2H4v16h2v-6h12v6h2V6h2v16H2V2h2zm4 18h8v-4H8v4zM20 6h-2V4h2v2zM6 6h9v4H6V6z" fill="currentColor"/>
+                        </svg>保存并生效
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
     <!--登录页面-->
@@ -76,7 +106,7 @@
                 <button title="submit" type="submit" id="submit">
                     <svg style="width:20px" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2H4zm10-4h2v2h-2V7zm0 0h-2V5h2v2zm0 10h2v-2h-2v2zm0 0h-2v2h2v-2z" fill="currentColor"/>
-                    </svg>                    
+                    </svg>
                 </button>
             </div>
         </form>
@@ -88,7 +118,7 @@
     </footer>
     <script>
         // ==================赛事数据==================
-        let gamedata = {
+        const defaultGamedata = {
             status: -1, // 赛事状态 - -1: 需要配置，等待登录； 0: 等待开始； 1: 正在进行； 2: 已结束.
             startTime: 0, // 比赛开始时的UNIX时间戳 **此处需要修改，上一版本中Py3的Unix时间戳与JS时间单位不同！**
             section: 1, //  比赛场次，大于0整数
@@ -102,14 +132,71 @@
                     score: 0 // 队伍B得分
                 }
             },
-            message: `Funky Scoreboard` // 计分板页脚小标题
+            message: `Funky Scoreboard`, // 计分板页脚小标题
+            sfx: false //   音效
         }
+        var gamedata = defaultGamedata
+        //  存放赛事数据修改历史的栈
+        var historyStack = []
+        //  操作栈的函数
+        //      action: 0 - 生效栈顶（出栈）; 1 - 保存当前（入栈）; 
+        function gamedataStack(action){
+            const localHSname = `historyStack_${location.href.split('/')[location.href.split('/').length-1]}`
+
+            function push(element) {
+                historyStack.push(element);
+            }
+            function pop() {
+                if (isEmpty()) {
+                    throw Error("栈为空")
+                    return -1
+                }
+                return historyStack.pop();
+            }
+            function peek() {
+                if (isEmpty()) {
+                    throw Error("栈为空")
+                    return -1
+                }
+                return historyStack[historyStack.length - 1];
+            }
+            //  栈内至少保留默认记录
+            function isEmpty() {
+                if(historyStack.length == 0){
+                    push(defaultGamedata)
+                }
+                return historyStack.length === 1;
+            }
+            //  将栈保存至localStorage
+            function save2local() {
+                localStorage.setItem(localHSname, JSON.stringify(historyStack))
+            }
+
+            //  从localStorage提取之前的记录
+            if(isEmpty() && localStorage.getItem(localHSname) != null){
+                historyStack = JSON.parse(localStorage.getItem(localHSname))
+                gamedata = historyStack[historyStack.length -1]
+            }
+
+            switch(action){
+                case 0: 
+                    gamedata = pop();
+                    break;
+                case 1: 
+                    push(gamedata);
+                    break;
+                default: break
+            }
+            save2local()
+        }
+        gamedataStack()
         // ==================登录操作==================
         // 删除失效token
         var loginStatus = 0
         function resetToken(){
             localStorage.removeItem('authorization');
-            document.getElementById('loginForm').style.display = 'block' 
+            document.getElementById('loginForm').style.display = 'initial' 
+            
         }
 
         //  更新赛事数据
@@ -145,7 +232,7 @@
                     loginStatus = 1
                     setTimeout(()=>{
                         document.querySelector('#login-layout').style.display = "none" 
-                        document.querySelector('#config-layout').style.display = "block"
+                        document.querySelector('#config-layout').style.display = "initial"
                         document.querySelector('footer').style.display = "none"
                         document.title = "控制台"
                     }, 5000)
@@ -284,7 +371,7 @@
             checkUpLogin()
         },2500)
         // ==================配置控件==================
-        //  （移动适配）
+        //  DOM、移动适配
         //  setCurrentCard
         //      n:
         //      移动端：当前显示的卡片
@@ -337,5 +424,16 @@
         window.addEventListener('resize', ()=>{
             if(window.innerWidth > 850)setCurrentCard(currentCard)
         })
+        //  “队伍”卡片
+        document.querySelector('#config-gameInfo-submit').addEventListener('click',()=>{
+            event.preventDefault();
+            gamedata.team.A.name = document.querySelector('#config-gameInfo-name-teamA').value 
+            gamedata.team.B.name = document.querySelector('#config-gameInfo-name-teamB').value
+            gamedataStack(1)
+        })
+        //  （初步配置时）
+        //  生效默认的赛事数据，即未被修改的gamedata
+        document.querySelector('#config-gameInfo-name-teamA').value = gamedata.team.A.name 
+        document.querySelector('#config-gameInfo-name-teamB').value = gamedata.team.B.name 
     </script>
 </body>

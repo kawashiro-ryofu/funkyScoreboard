@@ -1,9 +1,11 @@
-const SERVERURL = "http://127.0.0.1:10721";
-var gaming = false
+
+
+const SERVERURL = "http://127.0.0.1:10721";	// 服务器地址
+var gaming = false	
 var gameend = false
-var startTime = 0;
-var section = 0
-var team = {
+var startTime = 0;	//	比赛开始时间
+var section = 0	//	比赛场次
+var team = {	//	各队数据
 	teamA: {
 		name: "A",
 		score: 0
@@ -13,6 +15,7 @@ var team = {
 		score: 0
 	}
 }
+var sfx = false	//	音效
 var subtitle = "Funky Scoreboard"
 
 //	获取日志
@@ -27,7 +30,7 @@ function getlog(){
 	})
 	return l
 }
-
+//	引导用户登录控制台
 function loginguide(){
 	$.ajax({
 		url: SERVERURL + '/api/getcontrolpanel?t=' + Math.random(),
@@ -37,6 +40,7 @@ function loginguide(){
 			$('#loginguide-url').text(result.url)
 			$('#loginguide-verifycode').text(result.verifycode)
 
+			//	提取日志
 			let a = getlog().split('\r\n')
 			let loghtml = ""
 			var color = "";
@@ -63,6 +67,7 @@ function loginguide(){
 		}
 	})
 }
+//	查询赛事数据（轮询）
 function query() {
 	$.ajax({
 		url: SERVERURL + '/api/gamestat?t=' + Math.random(),
@@ -71,14 +76,19 @@ function query() {
 			$('#welcome')
 				.slideUp()
 			gamestatus = parseInt(result.status)
+			sfx = result.sfx ?? false
 			switch (gamestatus) {
 				case 2:
 					$('#loginguide').slideUp()
+					//	比赛开始音效
+					if(gaming && !gameend && sfx)new Audio('./static/sfx/gameEnd.wav').play()
 					gaming = false;
 					gameend = true;
 					break;
 				case 1:
 					$('#loginguide').slideUp()
+					//	比赛开始音效
+					if(!gaming && sfx)new Audio('./static/sfx/gameStart.wav').play()
 					gaming = true;
 					gameend = false;
 					break;
@@ -112,13 +122,13 @@ function query() {
 }
 
 
-
+//	应用赛事数据
 function applyData() {
 	$('#game_section_n')
 		.html(section.toString())
 
 	function gamedataDisplay() {
-		//Calc Time
+		//	根据时间戳计算比赛时长
 		let t = Math.round(new Date()
 			.getTime() / 1000) - (startTime/1000)
 		let tmin = parseInt((Math.round(new Date()
@@ -133,11 +143,11 @@ function applyData() {
 		$('#timer_S')
 			.html(tsecs)
 
-		//	subtitle
+		//	小标题
 		$('#subtitle')
 			.text(subtitle)
 		
-		//PlayersNd'Score
+		//	队伍分数
 		$('#teamAname')
 			.html(team.teamA.name)
 		$('#teamBname')
@@ -146,6 +156,7 @@ function applyData() {
 			.text())
 		let oldscoreB = parseInt($('#teamBscore')
 			.text())
+		//	加扣分
 		if ((oldscoreA != team.teamA.score) || (oldscoreB != team.teamB.score)) {
 			let newscoreA = team.teamA.score.toString()
 			if (newscoreA.length == 1) newscoreA = '00' + newscoreA
@@ -157,7 +168,11 @@ function applyData() {
 				.html(newscoreA)
 			$('#teamBscore')
 				.html(newscoreB)
+
+			//	加分时的动效以及音效
 			if (team.teamA.score > oldscoreA) {
+				if(sfx && team.teamA.score == oldscoreA + 1)new Audio('static/sfx/scoreUp.wav').play()
+				if(sfx && team.teamA.score > oldscoreA + 1)new Audio('static/sfx/scoreUp++.wav').play()
 				$("#teamAscore")
 					.addClass('boardhl')
 				setTimeout(() => {
@@ -166,6 +181,8 @@ function applyData() {
 				}, 5000)
 			}
 			if (team.teamB.score > oldscoreB) {
+				if(sfx && team.teamB.score == oldscoreB + 1)new Audio('static/sfx/scoreUp.wav').play()
+				if(sfx && team.teamB.score > oldscoreB + 1)new Audio('static/sfx/scoreUp++.wav').play()
 				$("#teamBscore")
 					.addClass('boardhl')
 				setTimeout(() => {
@@ -173,7 +190,9 @@ function applyData() {
 						.removeClass('boardhl')
 				}, 5000)
 			}
+			//	扣分时的动效以及音效
 			if (team.teamA.score < oldscoreA) {
+				if(sfx)new Audio('static/sfx/scoerLose.wav').play()
 				$("#teamAscore")
 					.addClass('boarddl')
 				setTimeout(() => {

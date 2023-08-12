@@ -40,7 +40,8 @@ let gamedata = {
 			score: 0 // 队伍B得分
 		}
 	},
-	message: `Funky Scoreboard ${version}` // 计分板页脚小标题
+	message: `Funky Scoreboard ${version}`, // 计分板页脚小标题
+	sfx: false // 音效，默认禁用
 }
 
 // 设置密钥，通常应该从环境变量中获取
@@ -244,7 +245,8 @@ app.post('/api/applydata', (req, res) => {
 					score: newdat.team.B.score ?? olddat.team.B.score
 				}
 			},
-			message: newdat.message ?? olddat.message
+			message: newdat.message ?? olddat.message,
+			sfx: newdat.sfx ?? olddat.sfx
 		}
 	}
 	try {
