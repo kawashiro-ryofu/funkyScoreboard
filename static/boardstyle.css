@@ -29,7 +29,8 @@ body{
     display: inline-block;
     color: lightcoral;
     font-size: 48px;
-    width: 200px;
+    width: 250px;
+    height: 80px;
     overflow: hidden;
     font-weight: bold;
 }

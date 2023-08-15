@@ -171,8 +171,8 @@ function applyData() {
 
 			//	加分时的动效以及音效
 			if (team.teamA.score > oldscoreA) {
-				if(sfx && team.teamA.score == oldscoreA + 1)new Audio('static/sfx/scoreUp.wav').play()
-				if(sfx && team.teamA.score > oldscoreA + 1)new Audio('static/sfx/scoreUp++.wav').play()
+				if(sfx && team.teamA.score <= oldscoreA + 2)new Audio('static/sfx/scoreUp.wav').play()
+				if(sfx && team.teamA.score > oldscoreA + 2)new Audio('static/sfx/scoreUp++.wav').play()
 				$("#teamAscore")
 					.addClass('boardhl')
 				setTimeout(() => {
@@ -181,8 +181,8 @@ function applyData() {
 				}, 5000)
 			}
 			if (team.teamB.score > oldscoreB) {
-				if(sfx && team.teamB.score == oldscoreB + 1)new Audio('static/sfx/scoreUp.wav').play()
-				if(sfx && team.teamB.score > oldscoreB + 1)new Audio('static/sfx/scoreUp++.wav').play()
+				if(sfx && team.teamB.score <= oldscoreB + 2)new Audio('static/sfx/scoreUp.wav').play()
+				if(sfx && team.teamB.score > oldscoreB + 2)new Audio('static/sfx/scoreUp++.wav').play()
 				$("#teamBscore")
 					.addClass('boardhl')
 				setTimeout(() => {
@@ -192,7 +192,7 @@ function applyData() {
 			}
 			//	扣分时的动效以及音效
 			if (team.teamA.score < oldscoreA) {
-				if(sfx)new Audio('static/sfx/scoerLose.wav').play()
+				if(sfx)new Audio('static/sfx/scoreLose.wav').play()
 				$("#teamAscore")
 					.addClass('boarddl')
 				setTimeout(() => {
@@ -201,6 +201,7 @@ function applyData() {
 				}, 5000)
 			}
 			if (team.teamB.score < oldscoreB) {
+				if(sfx)new Audio('static/sfx/scoreLose.wav').play()
 				$("#teamBscore")
 					.addClass('boarddl')
 				setTimeout(() => {
