@@ -263,3 +263,28 @@ button .config-icon{
 #config-scoreBoardConfig #config-scoreBoardConfig-dangerZone button:hover{
     background-color: red;
 }
+#config-gameStat-startGame{
+    z-index: 40;
+    position: relative;
+    height: 95%;
+}
+#config-gameStat-startGame-stageDisplay{
+    font-size: 40px;
+    color: yellowgreen
+}
+#config-gameStat-startGame-stageDisplay span{
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#config-gameStat-startGame-start{
+    width: -moz-available;
+    width: -webkit-available;
+}
+
+#config-gameStat-gameStat{
+    background-color: aqua;
+    z-index: 30;
+    position: relative;
+    height: 95%;
+}

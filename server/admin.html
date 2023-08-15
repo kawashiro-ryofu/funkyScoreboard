@@ -66,7 +66,17 @@
             </div>
             <div class="config-card-widget">
                 <div id="config-gameStat-startGame">
-
+                    <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">
+                        <h3 id="config-gameStat-startGame-stageDisplay">第<span>X</span>场</h3><br>
+                        <button id="config-gameStat-startGame-start">
+                            <svg style="width: 20px" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z" fill="currentColor"/>
+                            </svg>开始
+                        </button>
+                    </div>
+                </div>
+                <div id="config-gameStat-gameStat">
+                    
                 </div>
             </div>
         </div>
@@ -203,7 +213,7 @@
             if(isEmpty() && localStorage.getItem(localHSname) != null){
                 if(JSON.parse(localStorage.getItem(localHSname)).length){
                     historyStack = JSON.parse(localStorage.getItem(localHSname))
-                    gamedata = historyStack[historyStack.length -1]
+                    gamedata = JSON.parse(historyStack[historyStack.length -1])
                 }
             }
 
@@ -489,18 +499,18 @@
         //  “队伍”卡片
         document.querySelector('#config-gameInfo-submit').addEventListener('click',()=>{
             event.preventDefault();
-            gamedataStack(1)
             gamedata.team.A.name = document.querySelector('#config-gameInfo-name-teamA').value 
             gamedata.team.B.name = document.querySelector('#config-gameInfo-name-teamB').value
+            gamedataStack(1)
             applyData()
             
         })
         //  “看板”卡片
         document.querySelector('#config-scoreBoardConfig-submit').addEventListener('click',()=>{
             event.preventDefault();
-            gamedataStack(1)
             gamedata.message = document.querySelector('#config-scoreBoardConfig-subtitle').value
             gamedata.sfx = document.querySelector('#config-scoreBoardConfig-sfx input[type="checkbox"]').checked
+            gamedataStack(1)
             applyData()
             
         })
@@ -514,15 +524,29 @@
                 else resolve()
             })
             .then(()=>{
+                //  栈顶先出栈，因为栈顶保存的是当前的
+                gamedataStack(0)
                 gamedata = gamedataStack(0)
                 dataToWidget()
             })
             .catch(()=>{
                 toast('已是最早的一次操作', 2)
+                gamedata = defaultGamedata
+                gamedataStack(1)
             })
             
         })
-        
+        document.querySelector('#config-scoreBoardConfig-dangerZone-reset').addEventListener('click', ()=>{
+            event.preventDefault();
+            if(window.confirm('你确定要这么做吗？')){
+                const auth = localStorage.getItem('authorization') 
+                localStorage.clear()
+                localStorage.setItem('authorization', auth)
+                setTimeout(location.reload(), 2000)
+            }
+        })
+        //  “赛事”卡片
+
         //  （初步配置时）
         dataToWidget()
     </script>
