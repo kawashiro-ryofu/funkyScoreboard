@@ -243,7 +243,7 @@ new Promise((resolve, reject) => {
 		setTimeout(() => {
 			window.$ = require('jquery')
       resolve()
-		}, 3000)
+		}, 6000)
 	})
 	.then(() => {
 
