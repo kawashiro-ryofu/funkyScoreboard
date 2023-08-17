@@ -1,2 +1,2 @@
-Funky Scoreboard (Prototype)
-v0.0.1
+Funky Scoreboard
+一个普通计分板应用
