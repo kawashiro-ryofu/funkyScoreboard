@@ -231,6 +231,10 @@ app.post('/api/applydata', (req, res) => {
 
 	function applyData(newdat){
 		let olddat = gamedata
+		//	应对设备时差
+		if(olddat.status != 1 && newdat.status == 1){
+			newdat.startTime = new Date().getTime()
+		}
 		gamedata = {
 			status: newdat.status ?? olddat.status, 
 			startTime: newdat.startTime ?? olddat.startTime, 

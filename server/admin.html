@@ -103,6 +103,11 @@
                         </button>
                     </div>
                 </div>
+                <div id="config-gameStat-waiting">
+                    <div style="padding: 20%;font-size: 28px;color:aqua">
+                        <img src="static/loading.gif" /><br>少女祈祷中……
+                    </div>
+                </div>
             </div>
         </div>
         <div class="config-card" id="config-scoreBoardConfig">
@@ -530,13 +535,19 @@
 
             document.querySelector('#config-gameStat-startGame-stageDisplay span').innerHTML = gamedata.section
             document.querySelector('#config-gameStat-gameStat-stageDisplay span').innerHTML = gamedata.section
-            //  ”赛事“卡片中的两个div
+            //  ”赛事“卡片中的三个div
             if(gamedata.status == 1){
                 document.querySelector('#config-gameStat-startGame').style.display = 'none'
                 document.querySelector('#config-gameStat-gameStat').style.display = 'block'
+                document.querySelector('#config-gameStat-waiting').style.display="none"
+            }else if(gamedata.status == 2){
+                document.querySelector('#config-gameStat-startGame').style.display = 'none'
+                document.querySelector('#config-gameStat-gameStat').style.display = 'none'
+                document.querySelector('#config-gameStat-waiting').style.display="block"
             }else{
                 document.querySelector('#config-gameStat-startGame').style.display = 'block'
                 document.querySelector('#config-gameStat-gameStat').style.display = 'none'
+                document.querySelector('#config-gameStat-waiting').style.display="none"
             }
 
             document.querySelector('#config-gameStat-gameStat-teamA-score').innerHTML = gamedata.team.A.score
@@ -618,15 +629,18 @@
             if(confirm('结束比赛？')){
                 event.preventDefault();
                 gamedata.status = 2
-                gamedata.section++
                 applyData()
                 gamedataStack(1)
                 dataToWidget()
+                document.querySelector('#config-gameStat-waiting').style="initial"
                 setTimeout(()=>{
+                    gamedata.section++
                     if(gamedata.status == 2){
                         gamedata.status = 0
                         gamedataStack(1)
                         applyData(false)
+                        document.querySelector('#config-gameStat-waiting').style="none"
+                        dataToWidget()
                     }
                 }, 10000)
             }

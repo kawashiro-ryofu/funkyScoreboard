@@ -352,4 +352,24 @@ button .config-icon{
     #config-gameStat-startGame-stageDisplay{
         font-size: 30px;
     }
+    #config-gameStat-waiting div{
+        font-size: 20px !important;
+    }
+}
+
+#config-gameStat-waiting{
+    position: absolute;
+    z-index:38;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    background-color: #000000DD;
+    margin: auto 0;
+    text-align: center;
+    color: white
+}
+
+#config-gameStat-waiting div img{
+    width: 160px;
 }

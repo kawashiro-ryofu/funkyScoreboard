@@ -129,11 +129,15 @@ function applyData() {
 
 	function gamedataDisplay() {
 		//	根据时间戳计算比赛时长
+		/*
 		let t = Math.round(new Date()
 			.getTime() / 1000) - (startTime/1000)
 		let tmin = parseInt((Math.round(new Date()
 			.getTime() / 1000) - (startTime/1000)) / 60)
-		let tsec = parseInt(t - tmin * 60)
+		let tsec = parseInt(t - tmin * 60)*/
+		let t = new Date(new Date().getTime() - startTime)
+		let tmin = t.getMinutes()
+		let tsec = t.getSeconds()
 		let tmins = tmin.toString()
 		if (tmins.length < 2) tmins = '0' + tmins
 		let tsecs = tsec.toString()
