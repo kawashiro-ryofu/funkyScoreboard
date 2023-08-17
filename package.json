@@ -1,6 +1,6 @@
 {
   "name": "funkyscoreboard",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "A funky scoreboard",
   "main": "main.js",
   "scripts": {
