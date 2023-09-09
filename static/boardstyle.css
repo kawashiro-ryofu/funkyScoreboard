@@ -1,3 +1,9 @@
+/*	Funky Scoreboard
+//	(C) 2023 kawashiro-ryofu
+//	License: MPL-2.0
+//	boardstyle.css
+*/
+
 @font-face {
     font-family: pixel;
     src: url('font.ttf');
@@ -188,4 +194,38 @@ body{
 }
 #loginguide-log::-webkit-scrollbar {
     width: 0
+}
+#fullscreenCtrlBar{
+    display: none;
+    opacity: 0;
+    z-index: 999;
+    position: absolute;
+    right: .5em;
+    transition: opacity .2s;
+}
+#fullscreenCtrlBar:hover{
+    opacity: 1;
+}
+#fullscreenCtrlBar button{
+    width: 32px;
+    border: solid 2px;
+    font-family: 'pixel';
+    font-size: 18px;
+    padding: 4px;
+    transition: background-color .2s;
+}
+#fullscreenCtrlBar button:hover{
+    background-color: gray;
+}
+#fullscreenCtrlBar-window{
+    display: none;
+}
+@keyframes show{
+    0%{opacity: 0;}
+    10%{opacity: 1;}
+    90%{opacity: 1;}
+    100%{opacity: 0;}
+}
+.show4while{
+    animation: show 2s;
 }

@@ -1,6 +1,6 @@
 {
   "name": "funkyscoreboard",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "A funky scoreboard",
   "main": "main.js",
   "scripts": {
@@ -22,6 +22,6 @@
   },
   "devDependencies": {
     "electron": "^25.4.0",
-    "electron-packager": "^17.1.1"
+    "electron-packager": "^17.1.2"
   }
 }

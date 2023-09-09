@@ -1,8 +1,7 @@
-/*
-  Funky Scoreboard
-  (C)2023-now kawashiro-ryofu@南昌市实验中学信息部
-  License: MPL-2.0
-*/
+//	Funky Scoreboard
+//	(C) 2023 kawashiro-ryofu
+//	License: MPL-2.0
+//	server.js	
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const qrcode = require('qrcode');
@@ -57,26 +56,48 @@ function genkey() {
 
 	return randomString;
 }
-// 获取本机局域网IP
+
 function getLocalIP() {
 	const interfaces = networkInterfaces();
-
-	for (const interfaceName in interfaces) {
-		const interface = interfaces[interfaceName];
-		for (let i = 0; i < interface.length; i++) {
-			const {
-				address,
-				family,
-				internal
-			} = interface[i];
-			// 过滤 IPv4 和非内部（非Loopback）地址
-			if (family === 'IPv4' && !internal) {
-				return address;
-			}
+	
+	function isVirtualNIC(interfaceName) {
+	  const virtualNicKeywords = [
+		"Virtual",
+		"VMware",
+		"VirtualBox",
+		"Hyper-V",
+		"TAP-Windows",
+		"VPN",
+		"Wireless",
+		"WiFi",
+		"Microsoft Loopback Adapter",
+		"Docker"
+	  ];
+	  
+	  for (const keyword of virtualNicKeywords) {
+		if (interfaceName.toLowerCase().includes(keyword.toLowerCase())) {
+		  return true;
 		}
+	  }
+	  return false;
 	}
+  
+	for (const interfaceName in interfaces) {
+	  // 过滤虚拟网卡
+	  if (!isVirtualNIC(interfaceName)) {
+		const currentInterface = interfaces[interfaceName];
+		for (let i = 0; i < currentInterface.length; i++) {
+		  const { address, family, internal } = currentInterface[i];
+		  // 过滤 IPv4 和非内部（非Loopback）地址
+		  if (family === 'IPv4' && !internal) {
+			return address;
+		  }
+		}
+	  }
+	}
+  
 	return null; // 如果没有找到合适的 IP 地址，则返回null或抛出异常
-}
+  }
 
 //  控制台验证码
 const secretKey = genkey();

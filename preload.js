@@ -1,5 +1,7 @@
-
-
+//	Funky Scoreboard
+//	(C) 2023 kawashiro-ryofu
+//	License: MPL-2.0
+//	preload.js	
 const SERVERURL = "http://127.0.0.1:10721";	// 服务器地址
 var gaming = false	
 var gameend = false
@@ -16,7 +18,20 @@ var team = {	//	各队数据
 	}
 }
 var sfx = false	//	音效
-var subtitle = "Funky Scoreboard"
+var subtitle = "(C) 2023 kawashiro-ryofu"
+var fullscreen = false
+const { ipcRenderer } = require('electron');
+
+//		启用/关闭全屏模式
+function fullscreenToggle(){
+	if(!fullscreen)ipcRenderer.send('enable-fullscreen');
+	else ipcRenderer.send('disable-fullscreen');
+	fullscreen = !fullscreen
+}
+//		退出程序(suicide笑)
+function suicide(){
+	ipcRenderer.send('suicide');
+}
 
 //	获取日志
 function getlog(){
@@ -242,7 +257,20 @@ function applyData() {
 new Promise((resolve, reject) => {
 		setTimeout(() => {
 			window.$ = require('jquery')
-      resolve()
+			document.getElementById('fullscreenCtrlBar').style.display = 'block'
+			document.getElementById('fullscreenCtrlBar').classList.add('show4while')
+			document.getElementById('fullscreenCtrlBar-fullscreen').addEventListener('click', ()=>{
+				fullscreenToggle()
+				document.getElementById('fullscreenCtrlBar-fullscreen').style.display = "none"
+				document.getElementById('fullscreenCtrlBar-window').style.display = "inline-block"
+			})
+			document.getElementById('fullscreenCtrlBar-window').addEventListener('click', ()=>{
+				fullscreenToggle()
+				document.getElementById('fullscreenCtrlBar-fullscreen').style.display = "inline-block"
+				document.getElementById('fullscreenCtrlBar-window').style.display = "none"
+			})
+			document.getElementById('fullscreenCtrlBar-close').addEventListener('click', ()=>{suicide()})
+      		resolve()
 		}, 6000)
 	})
 	.then(() => {
@@ -252,3 +280,5 @@ new Promise((resolve, reject) => {
 			applyData()
 		}, 200)
 	})
+
+
